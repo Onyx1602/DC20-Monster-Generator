@@ -1,8 +1,8 @@
 // Prevent redeclaration if script is loaded multiple times
-if (typeof window !== "undefined" && window.__dc20_ai_ability_generator_loaded__) {
+if (typeof window !== "undefined" && window.__dc20_ability_generator_loaded__) {
   // Already loaded, do nothing
 } else {
-  if (typeof window !== "undefined") window.__dc20_ai_ability_generator_loaded__ = true;
+  if (typeof window !== "undefined") window.__dc20_ability_generator_loaded__ = true;
 
   // --- Compendium Ability Pools (by Creature Type and Role) ---
   const TYPE_ABILITY_IDS = {
@@ -486,7 +486,7 @@ if (typeof window !== "undefined" && window.__dc20_ai_ability_generator_loaded__
       // Web Snare
       "Compendium.dc20-monster-generator.monster-generator-abilities.Item.Cr2eYVYPaQbyPuxh"
     ],
-    Oozes: [
+    Ooze: [
       // Amorphous Escape
       "Compendium.dc20-monster-generator.monster-generator-abilities.Item.lmmszPPMTbB8valD",
       // Amphibious
