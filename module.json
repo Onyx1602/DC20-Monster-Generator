@@ -1,7 +1,7 @@
 {
   "title": "DC20 Monster Generator",
   "description": "<p>Generates Monsters for DC20 based on your selections.</p>",
-  "version": "0.5.1",
+  "version": "1.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13",

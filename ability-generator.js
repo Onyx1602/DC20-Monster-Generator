@@ -1,8 +1,8 @@
 // Prevent redeclaration if script is loaded multiple times
-if (typeof window !== "undefined" && window.__dc20_ability_generator_loaded__) {
+if (typeof window !== "undefined" && window.__dc20_ai_ability_generator_loaded__) {
   // Already loaded, do nothing
 } else {
-  if (typeof window !== "undefined") window.__dc20_ability_generator_loaded__ = true;
+  if (typeof window !== "undefined") window.__dc20_ai_ability_generator_loaded__ = true;
 
   // --- Compendium Ability Pools (by Creature Type and Role) ---
   const TYPE_ABILITY_IDS = {
@@ -1255,13 +1255,13 @@ if (typeof window !== "undefined" && window.__dc20_ability_generator_loaded__) {
       const packId = `${module}.${pack}`; // e.g. "dc20-monster-generator.monster-generator-abilities"
       const packObj = game.packs.get(packId);
       if (!packObj) {
-        console.error(`[DC20 AI Ability Generator] Compendium pack not found: ${packId} (for id: ${id})`);
+        console.error(`[DC20 Ability Generator] Compendium pack not found: ${packId} (for id: ${id})`);
       } else {
         // Check if item exists in index
         const index = await packObj.getIndex();
         const found = index.find(e => e._id === itemId);
         if (!found) {
-          console.error(`[DC20 AI Ability Generator] Item not found in pack: ${packId} id: ${itemId}`);
+          console.error(`[DC20 Ability Generator] Item not found in pack: ${packId} id: ${itemId}`);
         }
       }
     }

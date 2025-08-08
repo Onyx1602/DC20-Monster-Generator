@@ -44,6 +44,9 @@ const ROLE_ADJUSTMENTS = {
  * Add "Generate Monster" button to Actors Directory tab (Foundry v13+ robust)
  ****************************************************************************/
 function addMonsterGenButton(html) {
+  // Only show for GM users
+  if (!game.user?.isGM) return;
+  
   // --- Patch: Ensure html is a jQuery object ---
   if (!(html instanceof $)) html = $(html);
 
@@ -66,7 +69,22 @@ function addMonsterGenButton(html) {
     </button>
   `);
   btn.on("click", () => {
-    new DC20MonsterGeneratorForm().render(true);
+    // 1 in 20 chance for popup
+    if (Math.floor(Math.random() * 20) === 0) {
+      // Show premium dialog, then open monster generator only after dialog closes
+      new Dialog({
+        title: "Monster Generator Premium",
+        content: `<p>Are you enjoying the monster generator so far? There is a premium version if you want more options like a Magic item generator and an Encounter Builder. You can get these options by supporting me here <a href="https://www.patreon.com/posts/135982278?collection=1652999" target="_blank">Premium Monster Generator</a>.<br><br>Furthermore, thank you for trying my monster generator and hope you enjoy it :).</p>`,
+        buttons: {
+          ok: { label: "OK" }
+        },
+        close: () => {
+          new DC20MonsterGeneratorForm().render(true);
+        }
+      }).render(true);
+    } else {
+      new DC20MonsterGeneratorForm().render(true);
+    }
   });
   header.append(btn);
 
@@ -1358,6 +1376,7 @@ async function generateMonsterAbilities(formData, level) {
  ****************************************************************************/
 if (typeof window !== "undefined") {
   window["get.dc20-monster-generator.regen-abilities"] = async function (macroItem) {
+    // Find the actor
     let actor = null;
     let item = macroItem;
     if (!item && typeof window.item !== "undefined") item = window.item;
@@ -1370,20 +1389,6 @@ if (typeof window !== "undefined") {
     }
     if (!actor) {
       ui.notifications.warn("No actor found to regenerate abilities for.");
-      return;
-    }
-
-    // --- DEBUG: Log what is present on window for troubleshooting ---
-    console.log("[DC20 Regen Macro] DEBUG: window.TYPE_ABILITY_IDS:", !!window.TYPE_ABILITY_IDS, "window.ROLE_ABILITY_IDS:", !!window.ROLE_ABILITY_IDS, "window.getRandomAbilityCompendiumItemId:", typeof window.getRandomAbilityCompendiumItemId, "window.getRandomAbilityIdForTypeOrRole:", typeof window.getRandomAbilityIdForTypeOrRole);
-
-    // Defensive: Check for pools and helper
-    if (
-      !window.TYPE_ABILITY_IDS ||
-      !window.ROLE_ABILITY_IDS ||
-      (typeof window.getRandomAbilityCompendiumItemId !== "function" && typeof window.getRandomAbilityIdForTypeOrRole !== "function")
-
-    ) {
-      ui.notifications.warn("Ability pools not loaded. Please ensure ability-generator.js is loaded before monster-generator.js in your module.json scripts array.");
       return;
     }
 
@@ -1413,10 +1418,20 @@ if (typeof window !== "undefined") {
     // Get type and role from actor or item
     let creatureType = "";
     let monsterRole = "";
+    let monsterRole2 = "";
     if (actor.system?.details) {
       creatureType = actor.system.details.creatureType || "";
-      monsterRole = (actor.system.details.role || actor.system.details.category || "").toLowerCase();
+      let roleField = actor.system.details.role || actor.system.details.category || "";
+      if (roleField.includes("/")) {
+        [monsterRole, monsterRole2] = roleField.split("/").map(r => r.trim().toLowerCase());
+      } else {
+        monsterRole = roleField.toLowerCase();
+        if (actor.system.details.monsterRole2) {
+          monsterRole2 = actor.system.details.monsterRole2.toLowerCase();
+        }
+      }
     }
+    // Fallback: try to get from item flags
     if ((!creatureType || !monsterRole) && item) {
       if (!creatureType && item.flags?.["dc20-monster-generator"]?.creatureType) {
         creatureType = item.flags["dc20-monster-generator"].creatureType;
@@ -1424,11 +1439,17 @@ if (typeof window !== "undefined") {
       if (!monsterRole && item.flags?.["dc20-monster-generator"]?.monsterRole) {
         monsterRole = item.flags["dc20-monster-generator"].monsterRole.toLowerCase();
       }
+      if (!monsterRole2 && item.flags?.["dc20-monster-generator"]?.monsterRole2) {
+        monsterRole2 = item.flags["dc20-monster-generator"].monsterRole2.toLowerCase();
+      }
       if (!creatureType && item.system?.creatureType) {
         creatureType = item.system.creatureType;
       }
       if (!monsterRole && item.system?.monsterRole) {
         monsterRole = item.system.monsterRole.toLowerCase();
+      }
+      if (!monsterRole2 && item.system?.monsterRole2) {
+        monsterRole2 = item.system.monsterRole2.toLowerCase();
       }
     }
 
@@ -1441,43 +1462,101 @@ if (typeof window !== "undefined") {
     }
     const itemCompendiumId = getItemCompendiumId(selectedItem);
 
-    // Use the new helper to get a random compendium item id for this type/role
+    // --- FIX: If two roles, randomly pick one for this regeneration ---
+    let chosenRole = monsterRole;
+    if (monsterRole && monsterRole2 && monsterRole !== monsterRole2) {
+      chosenRole = Math.random() < 0.5 ? monsterRole : monsterRole2;
+    }
+
+    // --- NEW: Avoid duplicates, try until a new ability is found or max attempts ---
     const getRandomAbility =
       window.getRandomAbilityCompendiumItemId ||
       window.getRandomAbilityIdForTypeOrRole;
-    const { id: newCompendiumId, poolType } = getRandomAbility({
-      type: creatureType,
-      role: monsterRole,
-      avoidId: itemCompendiumId
-    });
-    if (!newCompendiumId) {
-      ui.notifications.warn("No ability pool found for this actor's type or role. (Type: " + creatureType + ", Role: " + monsterRole + ")");
-      return;
-    }
 
-    // Defensive: Log what we're about to load
-    console.log("[DC20 Regen Macro] Loading compendium item:", newCompendiumId);
+    // Gather all existing ability names and sourceIds on the actor
+    const existingNames = new Set(actor.items.map(i => i.name));
+    const existingSourceIds = new Set(
+      actor.items.map(i =>
+        i.flags?.core?.sourceId ||
+        (typeof i._id === "string" && i._id.startsWith("Compendium.") ? i._id : null)
+      ).filter(Boolean)
+    );
 
-    // Load the compendium item (always a full compendium item id)
-    const parts = newCompendiumId.split(".");
-    let [prefix, ...rest] = parts;
-    if (prefix === "Compendium") prefix = "";
-    const [module, pack, type, itemId] = rest.length === 4 ? rest : parts;
-    const packId = `${module}.${pack}`;
-    const packObj = game.packs.get(packId);
-    if (!packObj) {
-      ui.notifications.warn(`Compendium pack not found: ${packId}`);
-      return;
+    let newCompendiumId = null, poolType = null, doc = null, attempts = 0;
+    const MAX_ATTEMPTS = 30;
+    while (attempts < MAX_ATTEMPTS) {
+      attempts++;
+      const result = getRandomAbility({
+        type: creatureType,
+        role: chosenRole,
+        avoidId: itemCompendiumId
+      });
+      newCompendiumId = result.id;
+      poolType = result.poolType;
+      if (!newCompendiumId) break;
+      // Defensive: Log what we're about to load
+      console.log("[DC20 Regen Macro] Loading compendium item:", newCompendiumId);
+      // Load the compendium item (always a full compendium item id)
+      const parts = newCompendiumId.split(".");
+      let [prefix, ...rest] = parts;
+      if (prefix === "Compendium") prefix = "";
+      const [module, pack, type, itemId] = rest.length === 4 ? rest : parts;
+      const packId = `${module}.${pack}`;
+      const packObj = game.packs.get(packId);
+      if (!packObj) continue;
+      doc = await packObj.getDocument(itemId);
+      if (!doc) continue;
+      // Check for duplicate by name or sourceId
+      if (existingNames.has(doc.name)) continue;
+      if (doc.flags?.core?.sourceId && existingSourceIds.has(doc.flags.core.sourceId)) continue;
+      if (typeof doc._id === "string" && doc._id.startsWith("Compendium.") && existingSourceIds.has(doc._id)) continue;
+      // Found a unique one
+      break;
     }
-    const doc = await packObj.getDocument(itemId);
     if (!doc) {
-      ui.notifications.warn("Could not load ability from compendium.");
+      ui.notifications.warn("No unique ability found for this actor's type or role. (Type: " + creatureType + ", Role: " + chosenRole + ")");
       return;
+    }
+
+    // --- Patch: Scale static damage to actor's level using the correct table ---
+    const DAMAGE_BY_LEVEL = {
+      "-1": "1", "0": "1", "1": "2", "2": "2", "3": "3", "4": "4", "5": "5", "6": "5",
+      "7": "6", "8": "6", "9": "7", "10": "7", "11": "8", "12": "8", "13": "9", "14": "10",
+      "15": "11", "16": "11", "17": "12", "18": "12", "19": "13", "20": "13"
+    };
+    const level = actor.system?.details?.level ?? 1;
+    const tableDamage = DAMAGE_BY_LEVEL.hasOwnProperty(String(level)) ? DAMAGE_BY_LEVEL[String(level)] : "2";
+    let docObj = doc.toObject();
+
+    // Patch all formulas: if the formula is a static number, replace it with tableDamage
+    if (docObj.system && docObj.system.formulas) {
+      for (let k in docObj.system.formulas) {
+        if (typeof docObj.system.formulas[k] === "string") {
+          // Only replace if it's a static number (no dice, no +, no -)
+          if (/^\d+$/.test(docObj.system.formulas[k].trim())) {
+            docObj.system.formulas[k] = tableDamage;
+          }
+        }
+      }
+    }
+
+    // Patch description: replace "deals X damage" and "take(s) X damage" with correct value from table
+    if (docObj.system && typeof docObj.system.description === "string") {
+      docObj.system.description = docObj.system.description.replace(
+        /deals\s+\d+\s*damage/gi,
+        `deals ${tableDamage} damage`
+      );
+      docObj.system.description = docObj.system.description.replace(
+        /(take(?:s)?\s+)\d+(\s*damage)/gi,
+        function(match, p1, p2) {
+          return `${p1}${tableDamage}${p2}`;
+        }
+      );
     }
 
     // --- Instead of updating, delete the selected item and create the new one ---
     await selectedItem.delete();
-    await actor.createEmbeddedDocuments("Item", [doc.toObject()]);
+    await actor.createEmbeddedDocuments("Item", [docObj]);
 
     ui.notifications.info(`Item "${selectedItem.name}" has been replaced with a new ability from the ${poolType || "type/role"} pool!`);
   };
