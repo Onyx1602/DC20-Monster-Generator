@@ -1,0 +1,24 @@
+{
+  "dc20-monster-generator": {
+    "title": "DC20 Monster Generator",
+    "form": {
+      "instructions": "Fill out the fields below to generate a DC20 monster.",
+      "creatureName": "Creature Name:",
+      "level": "Level:",
+      "creatureType": "Creature Type:",
+      "creatureSubtype": "Creature Subtype:",
+      "description": "Creature Description (optional):",
+      "generateButton": "Generate Monster"
+    },
+    "notification": {
+      "success": "Monster \"{name}\" created and imported!"
+    },
+    "settings": {
+      "openKey": "Keybinding for Monster Generator",
+      "openKeyHint": "Default is CTRL+SHIFT+M. Change this in module settings."
+    },
+    "ui": {
+      "generateMonsterButton": "Generate Monster"
+    }
+  }
+}
