@@ -1,0 +1,145 @@
+<div>
+  <link rel="stylesheet" type="text/css" href="modules/dc20-monster-generator/styles/monster-generator-form-polish.css">
+
+  <style>
+  /* Root wrapper for full background */
+  .monster-generator-root-bg {
+    background: #7c7c74;
+    border-radius: 12px;
+    padding: 0;
+    min-width: 476px;
+    max-width: 680px;
+    /* Ensure it fills the window-content area */
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+  .monster-generator-logo-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 0;
+    /* Remove background here, handled by root */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+  .monster-generator-logo-header img {
+    height: 240px;
+    max-width: 100%;
+    width: auto;
+    display: block;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0 auto;
+    pointer-events: none;
+  }
+  </style>
+
+  <div class="monster-generator-root-bg">
+    <div class="monster-generator-logo-header">
+      <video
+        id="monster-generator-logo-video"
+        src="modules/dc20-monster-generator/Icons/Logo/Monster_Generator_Logo_Animated.webm"
+        height="240"
+        autoplay
+        loop
+        muted
+        playsinline
+        style="max-width:100%;display:block;margin:0 auto;border:none;box-shadow:none;background:none;pointer-events:none;"
+      >
+        <source src="modules/dc20-monster-generator/Icons/Logo/Monster_Generator_Logo_Animated.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <form class="monster-generator-form">
+      <div class="form-group">
+        <p>Fill out the fields below to generate a monster.</p>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Creature Name:</label>
+        <input type="text" name="name" id="name" placeholder="e.g. Shadow Beast"/>
+      </div>
+
+      <!-- Image Upload/Choose -->
+      <div class="form-group">
+        <label for="customImage">Monster Image:</label>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="chooseImageBtn">Choose Image</button>
+          <input type="hidden" name="customImage" id="customImage" />
+          <img id="customImagePreview" src="" alt="Preview" style="width:96px;height:96px;object-fit:contain;display:none;border:1px solid #bcbcbc;background:#444;border-radius:4px;" />
+        </div>
+        <small>If you choose an image, it will override the default type image.</small>
+      </div>
+
+      <!-- Size | Type | SubType -->
+      <div class="form-group" style="display: flex; gap: 8px;">
+        <div style="flex:1;">
+          <label for="creatureSize">Size:</label>
+          <select name="creatureSize" id="creatureSize">
+            <option value="tiny">Tiny</option>
+            <option value="small">Small</option>
+            <option value="medium" selected>Medium</option>
+            <option value="large">Large</option>
+            <option value="huge">Huge</option>
+            <option value="gargantuan">Gargantuan</option>
+            <option value="colossal">Colossal</option>
+            <option value="titanic">Titanic</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label for="creatureType">Type:</label>
+          <select name="creatureType" id="creatureType">
+            <option value="">(None)</option>
+            {{#each types}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label for="creatureSubtype">Subtype:</label>
+          <select name="creatureSubtype" id="creatureSubtype" disabled>
+            <option value="">(Select Type First)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Level | Role | HP Rank -->
+      <div class="form-group" style="display: flex; gap: 8px;">
+        <div style="flex:1;">
+          <label for="level">Level:</label>
+          <input type="number" name="level" id="level" value="1" min="-1"/>
+        </div>
+        <div style="flex:1;">
+          <label for="monsterRole">Role:</label>
+          <select name="monsterRole" id="monsterRole">
+            {{#each roleOptions}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label for="hpRank">HP Rank:</label>
+          <select name="hpRank" id="hpRank">
+            {{#each hpRankOptions}}
+            <option value="{{this}}" {{#if (eq this ../hpRank)}}selected{{/if}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Creature Description (optional):</label>
+        <textarea name="description" id="description" placeholder="If blank, an automatic description is generated."></textarea>
+      </div>
+
+      <button type="submit">Generate Monster</button>
+    </form>
+  </div>
+</div>

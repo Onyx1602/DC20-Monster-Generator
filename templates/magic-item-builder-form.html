@@ -1,0 +1,104 @@
+<link rel="stylesheet" type="text/css" href="modules/dc20-monster-generator/styles/magic-item-builder-polish.css" />
+<form class="magic-item-builder-form">
+  <!-- Lock overlay: hidden when PDF validation is unlocked -->
+  <div id="mibLockOverlay" class="builder-pdf-overlay hidden">
+    <div class="builder-pdf-overlay-content">
+      <div class="builder-pdf-overlay-title">Locked</div>
+      <div class="builder-pdf-overlay-body">
+        This requires the DC20 Magazine #2: Magic Item System PDF, please validate the PDF in the Magic Item Generator. Press Escape to close this overlay.
+      </div>
+      <div class="builder-pdf-overlay-actions">
+        <a href="https://thedungeoncoach.com/products/dc20-magazine-2-magic-item-system" target="_blank" rel="noopener">Get the PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="mibName">Item Name</label>
+    <input type="text" id="mibName" name="mibName" placeholder="e.g. Cloak of Shadows" />
+  </div>
+
+  <div class="form-group">
+    <label for="mibImage">Image</label>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button type="button" id="mibChooseImageBtn">Choose Image</button>
+      <input type="hidden" id="mibImage" name="mibImage" />
+      <img id="mibImagePreview" src="" alt="Preview" />
+    </div>
+  </div>
+
+  <div class="form-group" style="display:flex; gap:8px;">
+    <div style="flex:1;">
+      <label for="mibType">Type</label>
+      <select id="mibType" name="mibType">
+        <option value="">(None)</option>
+        <option value="Armor">Armor</option>
+        <option value="One-Handed Weapons">One-Handed Weapons</option>
+        <option value="Other Equipment">Other Equipment</option>
+        <option value="Ranged Weapons">Ranged Weapons</option>
+        <option value="Shields">Shields</option>
+        <option value="Two-Handed Weapons">Two-Handed Weapons</option>
+        <option value="Versatile Weapons">Versatile Weapons</option>
+      </select>
+    </div>
+    <div style="flex:1;">
+      <label for="mibSubtype">Subtype</label>
+      <select id="mibSubtype" name="mibSubtype" disabled>
+        <option value="">(Select Type First)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button type="button" id="mibOpenPropListBtn" title="Open the magic properties list">Magic Item Property List</button>
+      <small>Click a property to add it. Max 3.</small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Selected Properties (max 3)</label>
+    <div id="mibSelectedProps"></div>
+    <input type="hidden" id="mibSelectedPropsInput" name="mibSelectedPropsInput" value="[]" />
+    <input type="hidden" id="mibSelectedPropMeta" name="mibSelectedPropMeta" value="{}" />
+  </div>
+
+  <div class="form-group" style="text-align:right; position:relative;">
+    <button type="submit" id="mibBuildBtn">Build</button>
+  </div>
+</form>
+
+<!-- Property List Modal (scoped by JS) -->
+<div id="mibPropModal" class="hidden">
+  <div class="mib-modal-content">
+    <div class="mib-modal-header">
+      <strong>Magic Properties</strong>
+      <input type="text" id="mibFilterName" placeholder="Filter by name..." />
+      <input type="number" id="mibFilterMin" placeholder="Min power" min="0" />
+      <input type="number" id="mibFilterMax" placeholder="Max power" min="0" />
+      <span style="flex:1;"></span>
+      <button type="button" id="mibPropModalCloseBtn">Close</button>
+    </div>
+    <div id="mibPropGrid" class="mib-grid"></div>
+    <div style="margin-top:8px;"><small>Tip: Click a property to add it to your selection.</small></div>
+  </div>
+</div>
+
+<!-- Compact PDF Unlock Popout (uses same ids as generator) -->
+<div id="magicItemPdfGate" class="magic-pdf-gate hidden">
+  <div class="magic-pdf-gate-content">
+    <h2>Unlock Magic Item Builder</h2>
+    <p>
+      This content requires the DC20 Magazine #2: Magic Item System PDF. You can find it
+      <a href="https://thedungeoncoach.com/products/dc20-magazine-2-magic-item-system" target="_blank" rel="noopener">here</a>.
+    </p>
+    <div class="magic-pdf-upload-row">
+      <input type="file" id="magicItemPdfFile" accept="application/pdf">
+      <button id="magicItemPdfValidateBtn" type="button">Validate PDF</button>
+    </div>
+    <div id="magicItemPdfStatus" class="magic-pdf-status"></div>
+    <div class="magic-pdf-actions">
+      <button id="magicItemPdfCloseBtn" type="button">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+.monster-generator-form {
+  background: #7c7c74;
+  color: #ffffff;
+  padding: 24px 18px 18px 18px;
+  border-radius: 12px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  width: 100%;
+  min-height: unset;
+  box-sizing: border-box;
+  /* Prevent form from extending past its content */
+  height: auto;
+  max-height: 100%;
+  overflow: visible;
+}
+
+.monster-generator-form label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.monster-generator-form input,
+.monster-generator-form select,
+.monster-generator-form textarea {
+  background: #6a6a62;
+  color: #ffffff;
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 2px;
+  margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.monster-generator-form select option {
+  background: #6e15cf;
+  color: #ffffff;
+}
+
+.monster-generator-form select option:checked {
+  background: #6e15cf;
+  color: #ffffff;
+}
+
+.monster-generator-form textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.monster-generator-form button,
+.monster-generator-form input[type="button"] {
+  background: #6e15cf;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+/* Specific styling for the Generate Monster button to make it bigger */
+.monster-generator-form button[type="submit"] {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 1.3em;
+  margin-top: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.monster-generator-form button:hover,
+.monster-generator-form input[type="button"]:hover {
+  background: #8a3eea;
+}
+
+.monster-generator-form .form-group {
+  margin-bottom: 14px;
+}
+
+.monster-generator-form small {
+  color: #e0e0e0;
+}
+
+.monster-generator-form img#customImagePreview {
+  border: 1px solid #bcbcbc;
+  background: #444;
+  margin-left: 8px;
+  max-width: 48px;
+  max-height: 48px;
+  border-radius: 4px;
+}
+
+/* Only target .monster-generator-form inside .window-content if needed */
+.window-content .monster-generator-form {
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+/* Remove or scope the following global selectors to avoid affecting other modules: */
+/*
+.window-content {
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+*/
+
+/* Instead, only target .monster-generator-form inside .window-content if needed: */
+.window-content .monster-generator-form {
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+  overflow: visible !important;
+}

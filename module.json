@@ -1,7 +1,7 @@
 {
   "title": "DC20 Monster Generator",
-  "description": "<p>Generates Monsters for DC20 based on your selections.</p>",
-  "version": "1.0",
+  "description": "<div class=\"message__5126c cozyMessage__5126c groupStart__5126c wrapper_c19a55 cozy_c19a55 zalgo_c19a55\"><div class=\"contents_c19a55\"><div id=\"message-content-1416510519334010951\" class=\"markup__75297 messageContent_c19a55\"><p>The DC20 Monster Generator helps Game Masters quickly create balanced monsters for their games in Foundry VTT. Features:</p><ul><li>Monster Generation Logic: Automatically calculates HP, PD, AD, and damage based on level, size, and role. Creature size adjusts defenses, and roles further modify stats for balance.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>Simple Setup: Install directly from the Foundry VTT module browser. Fully compatible with Foundry VTT v13.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>Customizable Creation: Generate monsters by name, size, type, level, and role. Upload your own monster images.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>Ability Assignment: Monsters receive role- and type-based abilities automatically, with the option to reroll for new results. Just press the on demand macro to select an ability to regenerate.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>Dynamic Scaling: Buff or debuff monsters to higher or lower levels with a using the table provided by the generation—ideal for reusing the same creature across tiers of play.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>Summoner Role Support: Automatically generates linked summons with predefined stats and abilities, which scale with items and level.<span class=\"hiddenVisually__27f77\">,</span></li></ul><ul><li>DCCrit Importer, Import monsters from DCCrit to FoundryVTT.</li><li>Magic Generator make making magic items 10 times easier.</li><li>Magic Item Buiilder have ideas for magic items choose what those properties are with this.</li></ul><p>This free tool makes monster prep fast, flexible, and scalable for DC20 GMs.</p></div></div></div>",
+  "version": "1.7",
   "compatibility": {
     "minimum": "13",
     "verified": "13",
@@ -18,11 +18,21 @@
   },
   "scripts": [
     "scripts/ability-generator.js",
-    "scripts/monster-generator.js"
+    "scripts/monster-generator.js",
+    "scripts/magic-item-effects.js",
+    "scripts/magic-item-generator.js",
+    "scripts/magic-item-builder.js",
+    "scripts/dccrit-importer.js"
   ],
   "styles": [
     {
       "src": "styles/monster-generator-form-polish.css"
+    },
+    {
+      "src": "styles/magic-item-generator-polish.css"
+    },
+    {
+      "src": "styles/magic-item-builder-polish.css"
     }
   ],
   "url": "https://github.com/Onyx1602/DC20-Monster-Generator",
@@ -61,6 +71,17 @@
       "label": "Monster Generator Notes",
       "path": "packs/monster-generator-notes",
       "type": "JournalEntry",
+      "system": "dc20rpg",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "magic-item-generator-templates",
+      "label": "Magic Item Generator Templates",
+      "path": "packs/magic-item-generator-templates",
+      "type": "Item",
       "system": "dc20rpg",
       "ownership": {
         "PLAYER": "OBSERVER",

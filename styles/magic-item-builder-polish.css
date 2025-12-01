@@ -1,0 +1,151 @@
+/* Builder form */
+.magic-item-builder-form {
+  background: #7c7c74;
+  color: #ffffff;
+  padding: 24px 18px 18px 18px;
+  border-radius: 12px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-width: 520px;
+  max-width: 720px;
+  box-sizing: border-box;
+  max-height: calc(100vh - 140px);   /* added */
+  overflow: auto;                    /* added */
+}
+.magic-item-builder-form label { color:#fff; font-weight:600; }
+.magic-item-builder-form input,
+.magic-item-builder-form select {
+  background:#6a6a62; color:#fff; border:1px solid #bcbcbc; border-radius:4px; padding:4px 8px; margin:2px 0 8px; width:100%; box-sizing:border-box;
+}
+.magic-item-builder-form select option {            /* added */
+  background: #6e15cf; 
+  color: #fff;
+}
+.magic-item-builder-form select option:checked {    /* added */
+  background: #6e15cf; 
+  color: #fff;
+}
+.magic-item-builder-form button {
+  background:#6e15cf; color:#fff; border:none; border-radius:4px; padding:7px 18px; font-weight:700; cursor:pointer;
+}
+.magic-item-builder-form button:hover { background:#8a3eea; }
+.magic-item-builder-form img#mibImagePreview {
+  border:1px solid #bcbcbc; background:#444; border-radius:4px; width:64px; height:64px; object-fit:contain; display:none;
+}
+
+/* Selected properties chips */
+#mibSelectedProps { display:flex; flex-wrap:wrap; gap:6px; min-height:32px; }
+.mib-empty { opacity:.8; font-style:italic; }
+.mib-chip { display:inline-flex; align-items:center; gap:6px; background:#444; color:#fff; border:1px solid #bcbcbc; border-radius:16px; padding:4px 8px; }
+.mib-chip-remove { background:#ff6464; color:#fff; border:none; border-radius:50%; width:20px; height:20px; line-height:18px; text-align:center; cursor:pointer; }
+.mib-chip-remove:hover { background:#ff3a3a; }
+.mib-chip-img { width:18px; height:18px; border-radius:3px; background:#222; border:1px solid #333; } /* Chip image for selected properties */
+
+/* Property list modal */
+#mibPropModal.hidden { display:none; }
+#mibPropModal {
+  position:fixed; inset:0; background:rgba(20,20,20,0.78); z-index: 2147483000; display:flex; align-items:flex-start; justify-content:center; padding:60px 20px 40px;
+}
+.mib-modal-content {
+  background:#7c7c74; color:#fff; padding:20px; border-radius:12px; width:720px; box-shadow:0 0 10px #000;
+}
+.mib-modal-header { display:flex; gap:8px; align-items:center; flex-wrap:wrap; cursor: move; } /* Indicate draggable header for the property browser */
+.mib-modal-header input, .mib-modal-header select { max-width:200px; }
+.mib-grid {
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px; margin-top:12px; max-height:420px; overflow:auto;
+}
+.mib-prop {
+  background:#4c4c46; border:1px solid #bcbcbc; border-radius:8px; padding:8px; display:flex; align-items:center; gap:8px; cursor:default;
+}
+.mib-prop img { width:28px; height:28px; border-radius:4px; background:#222; border:1px solid #333; }
+.mib-prop-name { font-weight:700; flex:1; }
+.mib-prop-power { opacity:.85; }
+
+/* PDF Gate (shared class names with generator for consistency) */
+.magic-pdf-gate.hidden { display:none; }
+.magic-pdf-gate { position: fixed; inset: 0; background: rgba(20,20,20,0.78); z-index: 10000; display:flex; align-items:flex-start; justify-content:center; padding:60px 20px; }
+.magic-pdf-gate-content { background:#7c7c74; color:#fff; padding:22px 24px 26px; border-radius:12px; width:560px; box-shadow:0 0 10px #000; }
+.magic-pdf-upload-row { display:flex; gap:10px; margin:14px 0 10px; align-items:center; }
+.magic-pdf-upload-row input[type="file"] { flex:1; background:#6a6a62; color:#fff; border:1px solid #bcbcbc; border-radius:4px; padding:6px; }
+.magic-pdf-status { font-size:.95em; min-height:18px; margin-top:4px; }
+.magic-pdf-status.success { color:#3ddc5c; }
+.magic-pdf-status.error { color:#ff6464; }
+.magic-pdf-status.warn { color:#ffd700; }
+
+/* Make the window content scrollable and fit viewport */
+.window-app.dc20-magic-item-builder .window-content {   /* ensure the app can scroll */
+  overflow: hidden auto;
+  max-height: calc(100vh - 120px);
+}
+
+/* Damage Type Picker Modal */
+.mib-dt-modal.hidden { display:none; }
+.mib-dt-modal {
+  position:fixed; inset:0; background:rgba(20,20,20,0.78); z-index: 2147483001;
+  display:flex; align-items:flex-start; justify-content:center; padding:60px 20px 40px;
+}
+.mib-dt-modal .mib-modal-content { width: 460px; }
+.mib-dt-grid {
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px; margin-top:12px; max-height:300px; overflow:auto;
+}
+.mib-dt-option {
+  background:#4c4c46; border:1px solid #bcbcbc; border-radius:8px; padding:8px; text-align:center; cursor:pointer; user-select:none;
+  transition: background-color .12s, border-color .12s, transform .08s; /* ensure smooth hover */
+}
+.mib-dt-option:hover {
+  background: var(--dt-bg, rgba(138,62,234,.16));   /* lighter, slightly transparent */
+  border-color: var(--dt-color, #8a3eea);           /* solid border in base color */
+  transform: translateY(-1px);
+}
+/* Compact popout variant for Builder */
+.window-app.dc20-magic-item-builder #magicItemPdfGate.pop {
+  display: block !important;
+  background: transparent !important;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483002;
+}
+.window-app.dc20-magic-item-builder #magicItemPdfGate.pop .magic-pdf-gate-content {
+  position: fixed; /* left/top set by JS */
+  width: 420px;
+  max-width: min(92vw, 420px);
+  background: #7c7c74;
+  color: #fff;
+  border: 1px solid #bcbcbc;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  pointer-events: auto;
+  padding: 16px 18px 14px;
+}
+
+/* Builder lock overlay */
+.window-app.dc20-magic-item-builder .builder-pdf-overlay.hidden { display: none; }
+.window-app.dc20-magic-item-builder .builder-pdf-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20,20,20,0.78);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 12px;
+}
+.window-app.dc20-magic-item-builder .builder-pdf-overlay-content {
+  background:#7c7c74;
+  color:#fff;
+  border:1px solid #bcbcbc;
+  border-radius:10px;
+  padding:14px 16px;
+  max-width: 560px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.window-app.dc20-magic-item-builder .builder-pdf-overlay-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.window-app.dc20-magic-item-builder .builder-pdf-overlay-actions a {
+  color:#ffd700;
+  text-decoration: underline;
+}

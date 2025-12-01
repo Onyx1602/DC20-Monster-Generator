@@ -1,0 +1,53 @@
+{
+  "dc20-monster-generator": {
+    "title": "DC20 Monster Generator",
+    "form": {
+      "instructions": "Fill out the fields below to generate a DC20 monster.",
+      "creatureName": "Creature Name:",
+      "level": "Level:",
+      "creatureType": "Creature Type:",
+      "creatureSubtype": "Creature Subtype:",
+      "description": "Creature Description (optional):",
+      "generateButton": "Generate Monster",
+      "secondRoleCheckbox": "Select second creature role"
+    },
+    "notification": {
+      "success": "Monster \"{name}\" created and imported!"
+    },
+    "settings": {
+      "openKey": "Keybinding for Monster Generator",
+      "openKeyHint": "Default is CTRL+SHIFT+M. Change this in module settings."
+    },
+    "ui": {
+      "generateMonsterButton": "Generate Monster"
+    },
+    "encounterBuilder": {
+      "title": "Encounter Builder",
+      "openButton": "Open Encounter Builder",
+      "numPlayers": "Number of Players:",
+      "playerLevel": "Player Level:",
+      "monsterDrop": "Drop Monsters Here",
+      "monsterCount": "Count",
+      "generateButton": "Generate Encounter",
+      "totalMonsterHP": "Total Monster HP:",
+      "perMonsterHP": "HP per Monster:",
+      "instructions": "Enter the number of players and their level, then drag monsters below and set their counts. When you generate, all monsters will be set to the player level and HP will be distributed evenly."
+    },
+    "magic-item-generator": {
+      "title": "Magic Item Generator",
+      "form": {
+        "instructions": "Fill out the fields below to generate a DC20 magic item.",
+        "itemName": "Item Name:",
+        "itemType": "Item Type:",
+        "itemSubtype": "Item Subtype:",
+        "itemProperties": "Number of Properties:",
+        "magicPower": "Magic Power:",
+        "itemCount": "Number of Items:",
+        "generateButton": "Generate Magic Item",
+        "randomizeButton": "Randomize Magic Item",
+        "chooseImage": "Choose Image",
+        "imagePreview": "Image Preview"
+    }
+  }
+}
+}

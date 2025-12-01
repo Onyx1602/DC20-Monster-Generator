@@ -1,0 +1,205 @@
+.magic-item-generator-form {
+  background: #7c7c74;
+  color: #ffffff;
+  padding: 24px 18px 18px 18px;
+  border-radius: 12px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-width: 500px;
+  max-width: 700px;
+  min-height: 400px;
+  box-sizing: border-box;
+  height: auto;
+  max-height: 100%;
+  overflow: visible;
+}
+.magic-item-generator-form label {
+  color: #ffffff;
+  font-weight: 600;
+}
+.magic-item-generator-form input,
+.magic-item-generator-form select,
+.magic-item-generator-form textarea {
+  background: #6a6a62;
+  color: #ffffff;
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 2px;
+  margin-bottom: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.magic-item-generator-form input[type="checkbox"],
+.magic-item-generator-form input[type="radio"] {
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.magic-item-generator-form select option {
+  background: #6e15cf;
+  color: #ffffff;
+}
+.magic-item-generator-form select option:checked {
+  background: #6e15cf;
+  color: #ffffff;
+}
+.magic-item-generator-form textarea {
+  min-height: 40px;
+  resize: vertical;
+}
+.magic-item-generator-form button,
+.magic-item-generator-form input[type="button"] {
+  background: #6e15cf;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.magic-item-generator-form button:hover,
+.magic-item-generator-form input[type="button"]:hover {
+  background: #8a3eea;
+}
+.magic-item-generator-form .form-group {
+  margin-bottom: 14px;
+}
+.magic-item-generator-form small {
+  color: #e0e0e0;
+}
+.magic-item-generator-form img#magicItemImagePreview {
+  border: 1px solid #bcbcbc;
+  background: #444;
+  margin-left: 8px;
+  max-width: 48px;
+  max-height: 48px;
+  border-radius: 4px;
+}
+.magic-item-generator-form input[disabled],
+.magic-item-generator-form select[disabled],
+.magic-item-generator-form textarea[disabled] {
+  background: #444 !important;
+  color: #bbb !important;
+  cursor: not-allowed !important;
+  border: 1px solid #ffb300 !important;
+  opacity: 0.8;
+  pointer-events: none !important;
+}
+.magic-item-generator-form select[disabled] {
+  pointer-events: none !important;
+}
+
+/* PDF Gate Modal Styles */
+.magic-pdf-gate.hidden { display:none; }
+.magic-pdf-gate {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,20,20,0.78);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 60px 20px 40px;
+}
+.magic-pdf-gate-content {
+  background: #7c7c74;
+  color: #fff;
+  padding: 22px 24px 26px;
+  border-radius: 12px;
+  width: 560px;
+  box-shadow: 0 0 10px #000;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  position: relative;
+  animation: magicFadeIn 0.2s ease-out;
+}
+.magic-pdf-gate-content h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+.magic-pdf-gate-content p a {
+  color: #ffd700;
+  text-decoration: underline;
+}
+.magic-pdf-upload-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.magic-pdf-upload-row input[type="file"] {
+  flex: 1;
+  background: #6a6a62;
+  padding: 6px;
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+  color: #fff;
+}
+.magic-pdf-upload-row button {
+  background: #6e15cf;
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  padding:8px 14px;
+  font-weight:600;
+  cursor:pointer;
+  transition: background .2s;
+}
+.magic-pdf-upload-row button:hover { background:#8a3eea; }
+.magic-pdf-actions {
+  text-align: right;
+  margin-top: 10px;
+}
+.magic-pdf-actions button {
+  background:#444;
+  color:#ffd700;
+  border:none;
+  border-radius:4px;
+  padding:7px 16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s;
+}
+.magic-pdf-actions button:hover {
+  background:#6e15cf;
+  color:#fff;
+}
+.magic-pdf-status {
+  font-size: 0.95em;
+  min-height: 18px;
+  margin-top: 4px;
+}
+.magic-pdf-status.success { color:#3ddc5c; }
+.magic-pdf-status.error { color:#ff6464; }
+.magic-pdf-status.warn { color:#ffd700; }
+@keyframes magicFadeIn {
+  from { opacity:0; transform: translateY(-8px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* Locked state overlay (optional visual cue) */
+.magic-item-generator-form.pdf-locked {
+  position: relative;
+}
+.magic-item-generator-form.pdf-locked::after {
+  content: "Upload required PDF to unlock.";
+  position: absolute;
+  inset: 0;
+  background: rgba(30,30,30,0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 1.05em;
+  color: #ffd700;
+  pointer-events: none;
+}

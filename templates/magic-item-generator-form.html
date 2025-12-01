@@ -1,0 +1,340 @@
+<link rel="stylesheet" type="text/css" href="modules/dc20-monster-generator/styles/magic-item-generator-polish.css">
+
+<form class="magic-item-generator-form">
+  <div class="form-group">
+    <p>{{localize "dc20-monster-generator.magic-item-generator.form.instructions"}}</p>
+  </div>
+  <div class="form-group">
+    <label for="magicItemName">{{localize "dc20-monster-generator.magic-item-generator.form.itemName"}}</label>
+    <input type="text" name="magicItemName" id="magicItemName" placeholder="e.g. Cloak of Shadows"/>
+  </div>
+  <div class="form-group">
+    <label for="magicItemImage">{{localize "dc20-monster-generator.magic-item-generator.form.chooseImage"}}</label>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button type="button" id="chooseMagicItemImageBtn">{{localize "dc20-monster-generator.magic-item-generator.form.chooseImage"}}</button>
+      <input type="hidden" name="magicItemImage" id="magicItemImage" />
+      <img id="magicItemImagePreview" src="" alt="Preview" style="width:64px;height:64px;object-fit:contain;display:none;border:1px solid #bcbcbc;background:#444;border-radius:4px;" />
+    </div>
+    <small>{{localize "dc20-monster-generator.magic-item-generator.form.imagePreview"}}</small>
+  </div>
+  <div class="form-group" style="display: flex; gap: 8px;">
+    <div style="flex:1;">
+      <label for="magicItemType">{{localize "dc20-monster-generator.magic-item-generator.form.itemType"}}</label>
+      <select name="magicItemType" id="magicItemType">
+        <option value="">(None)</option>
+        <option value="Armor">Armor</option>
+        <option value="One-Handed Weapons">One-Handed Weapons</option>
+        <option value="Other Equipment">Other Equipment</option>
+        <option value="Ranged Weapons">Ranged Weapons</option>
+        <option value="Shields">Shields</option>
+        <option value="Two-Handed Weapons">Two-Handed Weapons</option>
+        <option value="Versatile Weapons">Versatile Weapons</option>
+      </select>
+    </div>
+    <div style="flex:1;">
+      <label for="magicItemSubtype">{{localize "dc20-monster-generator.magic-item-generator.form.itemSubtype"}}</label>
+      <select name="magicItemSubtype" id="magicItemSubtype" disabled>
+        <option value="">(Select Type First)</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group" style="display: flex; gap: 8px;">
+    <div style="flex:1;">
+      <label for="magicItemProperties">{{localize "dc20-monster-generator.magic-item-generator.form.itemProperties"}}</label>
+      <select name="magicItemProperties" id="magicItemProperties">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+    <div style="flex:1;">
+      <label for="magicItemPower">{{localize "dc20-monster-generator.magic-item-generator.form.magicPower"}}</label>
+      <select name="magicItemPower" id="magicItemPower">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </div>
+    <div style="flex:1;">
+      <label for="magicItemCount">{{localize "dc20-monster-generator.magic-item-generator.form.itemCount"}}</label>
+      <input type="number" name="magicItemCount" id="magicItemCount" value="1" min="1" max="20"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <button type="submit" id="generateMagicItemBtn">{{localize "dc20-monster-generator.magic-item-generator.form.generateButton"}}</button>
+  </div>
+</form>
+
+<!-- PDF Unlock Modal -->
+<div id="magicItemPdfGate" class="magic-pdf-gate hidden">
+  <div class="magic-pdf-gate-content">
+    <h2>Unlock Magic Item Generator</h2>
+    <p>
+      This requires the DC20 Magazine #2: Magic Item System PDF you can find it 
+      <a href="https://thedungeoncoach.com/products/dc20-magazine-2-magic-item-system" target="_blank" rel="noopener">here</a>.
+      If you have the PDF please upload it below and the generator will unlock for you.
+    </p>
+    <div class="magic-pdf-upload-row">
+      <input type="file" id="magicItemPdfFile" accept="application/pdf">
+      <button id="magicItemPdfValidateBtn" type="button">Validate PDF</button>
+    </div>
+    <div id="magicItemPdfStatus" class="magic-pdf-status"></div>
+    <div class="magic-pdf-actions">
+      <button id="magicItemPdfCloseBtn" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Magic item subtypes and compendium ids
+  if (typeof window.magicItemSubtypes === "undefined") {
+    window.magicItemSubtypes = {
+      "Armor": [
+        { name: "Defensive (Heavy)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.JdjAUOdy0319BHlZ" },
+        { name: "Defensive (Light)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.NxzRbdoeKZOdEExz" },
+        { name: "Deflecting (Heavy)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.VB4572PFOP70e9u4" },
+        { name: "Deflecting (Light)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.olXhUqCGW4vqYzTE" },
+        { name: "Fortified (Heavy)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.vfgeuwGb3MPOHzqB" },
+        { name: "Fortified (Light)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.xwuXod8PwFwf5IAa" },
+        { name: "Highly Defensive (Heavy)", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.edU1OY1zmj6lUpHc" }
+      ],
+      "One-Handed Weapons": [
+        { name: "Brass Knuckles", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.30ZrtfjY9pkz8za3" },
+        { name: "Chain Whip", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.k24D7kE34EVyX9ZR" },
+        { name: "Club", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.fjUagzvxk63SJCoE" },
+        { name: "Hand Axe", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.ohzqeyWkSjKitG9U" },
+        { name: "Javelin", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.8IfvMwc3iEGuS3OW" },
+        { name: "Light Hammer", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.MXawsCtLLL6x8pBz" },
+        { name: "Mining Pick", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.tlj53jDgI7oLB9xf" },
+        { name: "Rapier", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.QvQa1su5IEJxBvIm" },
+        { name: "Short Sword", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.jGpeKsGbBkMAoEQl" },
+        { name: "Sickle", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.CpKfXJYlh6lOgmDs" },
+        { name: "Throwing Dagger", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.4uOo8axsTV51QUOq" },
+        { name: "Throwing Star", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.ppGt3wCT5rCnKPBB" }
+      ],
+      "Other Equipment": [
+        { name: "Foot Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.s5nvO0VoP4b78K7O" },
+        { name: "Hand Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.X1CHbIkZnA1g4ySb" },
+        { name: "Head Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.IoMz2iq5zae4HGTN" },
+        { name: "Mantle Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.UpTckx8gYYLriYj1" },
+        { name: "Neck Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.ZrEDvjq7OSRGrA2v" },
+        { name: "Ring Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.XGnfOwxaLAkRyFdp" },
+        { name: "Trinket Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.aJMy2WD7If4Rmn0b" },
+        { name: "Waist Gear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.FxbMkE2G6eLNOvFh" }
+      ],
+      "Ranged Weapons": [
+        { name: "Blowgun", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.1LW6ItR27EEZQ86L" },
+        { name: "Greatbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.JIGOA7txQakWzJYn" },
+        { name: "Hand Crossbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.GzLE39LF5dyutfiD" },
+        { name: "Heavy Crossbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.hdMJQUXhtSCMR1QQ" },
+        { name: "Light Crossbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.OSBRTTkl1fX7yvUG" },
+        { name: "Longbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.RHUl6evDl6yfNhDH" },
+        { name: "Shortbow", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.qoiU9NJ47c0Rrnwk" },
+        { name: "Sling", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.O58HsRNqtwo5tiTg" }
+      ],
+      "Shields": [
+        { name: "Buckler", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.WtIlCb7zFCUKfIl6" },
+        { name: "Heater Shield", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.bFG6ma9xfFDSQxLo" },
+        { name: "Kite Shield", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.g8byrlm1XW90Wtbu" },
+        { name: "Round Shield", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.1pKle1yI7kdgKZNb" },
+        { name: "Tower Shield", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.6Cg9tBkaagRLC8Hc" }
+      ],
+      "Two-Handed Weapons": [
+        { name: "Glaive", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.gn7gvXCthdVqWD9g" },
+        { name: "Great Whip", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.wWUPJfUMgh3FD6hS" },
+        { name: "Greataxe", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.QNwmvQKEKnNWhvlg" },
+        { name: "Greatmaul", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.ExFuxYW83bfrmqxz" },
+        { name: "Greatsword", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.f3jhCDrDs2iqSH5d" },
+        { name: "Halberd", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.3by7F0lRqTQqqz9r" },
+        { name: "Longpole", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.zz4TuGO78wytgVuQ" },
+        { name: "Meteor Hammer", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.jBSavWTcghV3Y4fi" },
+        { name: "Pike", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.U8jfpIH98CBDTDiQ" },
+        { name: "Scythe", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.xwmZWI5qbpZUyKFI" },
+        { name: "War Flail", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.T44JiTaDj4sAcCte" }
+      ],
+      "Versatile Weapons": [
+        { name: "Bastard Sword", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.qjgG3IZ1fLdypnOf" },
+        { name: "Battleaxe", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.Dtcerphyw5mqINjq" },
+        { name: "Bull Whip", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.J6f8aeEgOUA1gCQ5" },
+        { name: "Flail", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.gEOyEtT9345tL1Bp" },
+        { name: "Long Spear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.lNQslOk7QNbKqpiA" },
+        { name: "Longsword", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.CsmaMkiy6vPtEXNY" },
+        { name: "Morningstar", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.y5zLfBHqT6yancdm" },
+        { name: "Pickaxe", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.edE6yePQXBkOPXma" },
+        { name: "Quarterstaff", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.MnPkpzvRuN9SxRiS" },
+        { name: "Spear", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.jgVh5FKMFxH7PNbt" },
+        { name: "Warhammer", id: "Compendium.dc20-monster-generator.magic-item-generator-templates.Item.ccMXj2kd7QTZ1C5n" }
+      ]
+    };
+  }
+  // Populate subtype select when type changes
+  document.getElementById("magicItemType").addEventListener("change", event => {
+    const subtypeSelect = document.getElementById("magicItemSubtype");
+    subtypeSelect.innerHTML = "";
+    const typeValue = event.target.value;
+    if(window.magicItemSubtypes.hasOwnProperty(typeValue)){
+      window.magicItemSubtypes[typeValue].forEach(sub => {
+        const opt = document.createElement("option");
+        opt.value = sub.id;
+        opt.textContent = sub.name;
+        subtypeSelect.appendChild(opt);
+      });
+      subtypeSelect.disabled = false;
+    } else {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "(Select Type First)";
+      subtypeSelect.appendChild(opt);
+      subtypeSelect.disabled = true;
+    }
+  });
+  // Image picker logic
+  document.getElementById("chooseMagicItemImageBtn").addEventListener("click", async function() {
+    if (typeof FilePicker !== "undefined") {
+      const fp = new FilePicker({
+        type: "image",
+        callback: path => {
+          document.getElementById("magicItemImage").value = path;
+          const preview = document.getElementById("magicItemImagePreview");
+          if (path && path.trim()) {
+            preview.src = path;
+            preview.style.display = "block";
+          } else {
+            preview.src = "";
+            preview.style.display = "none";
+          }
+        }
+      });
+      fp.render(true);
+    } else {
+      alert("FilePicker is not available. Please use this in Foundry VTT.");
+    }
+  });
+  // Show preview if value is already set
+  const magicImageInput = document.getElementById("magicItemImage");
+  const magicPreview = document.getElementById("magicItemImagePreview");
+  if (magicImageInput && magicPreview) {
+    if (magicImageInput.value && magicImageInput.value.trim()) {
+      magicPreview.src = magicImageInput.value;
+      magicPreview.style.display = "block";
+    }
+  }
+  
+  // ===== PDF Gate Configuration =====
+  const PDF_UNLOCK_KEY = "dc20MagicItemPdfVerified"; // localStorage flag
+
+  const formEl = document.querySelector(".magic-item-generator-form");
+  const generateBtn = document.getElementById("generateMagicItemBtn");
+
+  // Build a convenience notification wrapper (Foundry or fallback)
+  function notify(type, msg){
+    if (window.ui?.notifications?.[type]) {
+      ui.notifications[type](msg);
+    } else {
+      console.log(`[${type.toUpperCase()}] ${msg}`);
+      if (type === "error") alert(msg);
+    }
+  }
+
+  function isUnlocked(){
+    return localStorage.getItem(PDF_UNLOCK_KEY) === "true";
+  }
+
+  // Disable interactive generation until unlocked
+  function lockFormUntilUnlock(){
+    if (isUnlocked()) return;
+    // Keep fields disabled visually (except allowing randomize if you want; leaving as-is)
+    formEl.classList.add("pdf-locked");
+  }
+
+  lockFormUntilUnlock();
+
+  // Modal elements
+  const gateEl = document.getElementById("magicItemPdfGate");
+  const pdfFileInput = document.getElementById("magicItemPdfFile");
+  const validateBtn = document.getElementById("magicItemPdfValidateBtn");
+  const statusEl = document.getElementById("magicItemPdfStatus");
+  const closeBtn = document.getElementById("magicItemPdfCloseBtn");
+
+  function openGate(){
+    gateEl.classList.remove("hidden");
+  }
+  function closeGate(){
+    gateEl.classList.add("hidden");
+  }
+
+  // Expose opener for external use (optional, harmless if unused)
+  window.DC20_OPEN_MAGIC_PDF_GATE = openGate;
+
+  // Intercept generate submit if not unlocked
+  if (generateBtn) {
+    generateBtn.addEventListener("click", function(ev){
+      if (!isUnlocked()) {
+        ev.preventDefault();
+        openGate();
+      }
+    });
+  }
+
+  closeBtn.addEventListener("click", () => closeGate());
+
+  // Intercept PDF validation button
+  validateBtn.addEventListener("click", async () => {
+    statusEl.textContent = "";
+    const file = pdfFileInput.files?.[0];
+    if (!file) {
+      statusEl.textContent = "Please select a PDF file.";
+      statusEl.className = "magic-pdf-status warn";
+      return;
+    }
+    if (file.type !== "application/pdf") {
+      statusEl.textContent = "File is not a PDF.";
+      statusEl.className = "magic-pdf-status error";
+      notify("error", "PDF invalid. Please upload the correct PDF.");
+      return;
+    }
+    validateBtn.disabled = true;
+    validateBtn.textContent = "Validating...";
+    try {
+      const result = await (window.DC20_MAGIC_PDF?.validateFile?.(file) ?? Promise.resolve({ ok:false, reason:"Validator missing" }));
+      if (result.ok) {
+        localStorage.setItem(PDF_UNLOCK_KEY, "true");
+        statusEl.textContent = "PDF validated. Generator unlocked permanently.";
+        statusEl.className = "magic-pdf-status success";
+        formEl.classList.remove("pdf-locked");
+        notify("info", "Magic Item Generator unlocked.");
+        setTimeout(()=>closeGate(), 900);
+      } else {
+        statusEl.textContent = "PDF is invalid. Please upload the correct PDF.";
+        statusEl.className = "magic-pdf-status error";
+        notify("error", "PDF invalid. Please upload the correct PDF.");
+        if (result.debug) console.warn(result.debug);
+      }
+    } catch (e){
+      statusEl.textContent = "Error validating PDF.";
+      statusEl.className = "magic-pdf-status error";
+      notify("error", "Error validating PDF.");
+      console.error(e);
+    } finally {
+      validateBtn.disabled = false;
+      validateBtn.textContent = "Validate PDF";
+    }
+  });
+
+  // Auto-open the PDF gate when the form renders if still locked
+  if (!isUnlocked()) {
+    // Slight delay to ensure DOM is ready
+    setTimeout(() => openGate(), 0);
+  }
+
+})();   <!-- IIFE end -->
+</script>
+
